@@ -7,8 +7,7 @@ public class PassDownOneWayPlatform : MonoBehaviour
 {
   // in seconds
   public float DoubleTapInterval = 0.5f;
-  [TagSelector]
-  public string OneWayPlatformTag;
+  public string OneWayPlatformTag = "OneWayPlatform";
 
   private float doubleTapD = -99.0f;
   private GameObject oneWayPlatform;

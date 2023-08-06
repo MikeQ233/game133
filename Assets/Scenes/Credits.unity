@@ -182,14 +182,14 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Credits:
 
-    Mike - Lead programmer
-
     Knheal - 2D artist
 
-    Ryanxz14
-    - Sound designer
+    Ryanxz14 - Sound designer
 
-    SirSunStone - Game designer
+    SirSunStone
+    - Game designer
+
+    Mike - programmer
 
     VixenSnow - Programmer'
   m_isRightToLeft: 0

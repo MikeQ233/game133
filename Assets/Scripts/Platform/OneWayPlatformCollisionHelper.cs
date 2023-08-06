@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class OneWayPlatformCollisionHelper : MonoBehaviour
 {
-  [TagSelector]
-  public string TargetTag;
+  public string TargetTag = "Player";
   public float Tolerance = 0.5f;
   public float UpWardForce = 5.0f;
   public bool EnableAntiStuck = false;

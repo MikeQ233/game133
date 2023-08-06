@@ -118,7 +118,6 @@ public class movement : MonoBehaviour
       jumpTime += 1;
       isGrounded = false;
       lastJumpedTime = Time.time;
-      Debug.Log(jumpTime);
     }
   }
 }

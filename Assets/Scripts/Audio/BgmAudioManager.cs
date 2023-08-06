@@ -7,7 +7,7 @@ public class BgmAudioManager : MonoBehaviour
 {
   [SerializeField] AudioMixer mixer;
 
-  string[] clipVolumes = { "Clip1", "Clip2", "Clip3" };
+  string[] clipVolumes = { "Clip1", "Clip2", "Clip3", "Clip4", "Clip5" };
   int index = 0;
   
   public void MixNextClip()
@@ -18,11 +18,11 @@ public class BgmAudioManager : MonoBehaviour
     }
   }
 
-  private void Update()
-  {
-    if (Input.GetKeyDown(KeyCode.Space))
-    {
-      MixNextClip();
-    }
-  }
+  //private void Update()
+  //{
+  //  if (Input.GetKeyDown(KeyCode.Space))
+  //  {
+  //    MixNextClip();
+  //  }
+  //}
 }

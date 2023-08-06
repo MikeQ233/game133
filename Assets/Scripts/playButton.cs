@@ -7,6 +7,6 @@ public class playButton : MonoBehaviour
 {
     public void startGame()
     {
-        SceneManager.LoadScene("tilemap");
+        SceneManager.LoadScene("ChurchMap");
     }
 }

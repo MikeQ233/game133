@@ -13,14 +13,6 @@ public class MoveDownSupport : MonoBehaviour
     isPassThroughEnabled = false;
   }
 
-  private void Update()
-  {
-    if (Input.GetKeyDown(KeyCode.Space))
-    {
-      tilemapCollider.enabled = false;
-    }
-  }
-
   public void EnablePassThrough(Collider2D targetCollider)
   {
     isPassThroughEnabled = true;
