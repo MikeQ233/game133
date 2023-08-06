@@ -14,13 +14,16 @@ public class movement : MonoBehaviour
   private int jumpTime;
   private float moveHorizontal;
   private Rigidbody2D rb;
+  private Animator animator;
   // used when player holding down w key while grounded.
   private float lastJumpedTime;
+  private bool facingRight = true;
   private void Awake()
   {
     rb = GetComponent<Rigidbody2D>();
     boxCollider = GetComponent<BoxCollider2D>();
     passDownOneWayPlatform = GetComponent<PassDownOneWayPlatform>();
+    animator = GetComponent<Animator>();
     jumpTime = 0;
   }
 
@@ -28,38 +31,70 @@ public class movement : MonoBehaviour
   void Update()
   {
     moveHorizontal = Input.GetAxisRaw("Horizontal");
-    if (Input.GetKeyDown(KeyCode.W) && jumpTime < jumpLimit)
+    if (Input.GetKeyDown(KeyCode.W))
     {
       DoJump();
     }
     else if (isGrounded == true && Input.GetKey(KeyCode.W) && Time.time - lastJumpedTime > 0.5f)
     {
+      // while player is on the ground, holding w will jump again!
+      // throttled to 0.5s
       DoJump();
     }
   }
   void FixedUpdate()
   {
+    if (moveHorizontal > 0 && !facingRight)
+    {
+      flip();
+    }
+    if (moveHorizontal < 0 && facingRight)
+    {
+      flip();
+    }
     if (moveHorizontal > 0.1f || moveHorizontal < -0.1f)
     {
       rb.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
+      animator.SetBool("isRunning", true);
+    }
+    else
+    {
+      animator.SetBool("isRunning", false);
     }
     checkIsGrounded();
   }
 
   private void checkIsGrounded()
   {
-    RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center + Vector3.down * 1.0f, boxCollider.bounds.size - new Vector3(0.1f, 0f, 0f), 0f, Vector2.down, 0.25f, PlatformLayerMask);
+    float heightTest = 0.2f;
+    var center = boxCollider.bounds.center - new Vector3(0, boxCollider.bounds.extents.y - 0.1f, 0);
+    var size = new Vector3(boxCollider.bounds.size.x, 0.1f, 0.0f);
+    RaycastHit2D raycastHit = Physics2D.BoxCast(center, size, 0f, Vector2.down, heightTest, PlatformLayerMask);
+    Color rayColor = raycastHit.collider != null ? Color.red : Color.green;
+    // to visualize box cast, need to set gizmos visible to see
+    Debug.DrawRay(center + new Vector3(boxCollider.bounds.extents.x, 0), Vector2.down * (size.y / 2.0f + heightTest), rayColor);
+    Debug.DrawRay(center - new Vector3(boxCollider.bounds.extents.x, 0), Vector2.down * (size.y / 2.0f + heightTest), rayColor);
     if (raycastHit.collider != null)
     {
-      if (raycastHit.collider.gameObject.GetComponent<MoveDownSupport>()?.IsPassThroughEnabled() ?? false)
+      var supp = raycastHit.collider.gameObject.GetComponent<MoveDownSupport>();
+      if (supp && supp.IsPassThroughEnabled())
       {
         isGrounded = false;
       } 
       else
       {
-        isGrounded = true;
-        jumpTime = 0;
-        passDownOneWayPlatform.OnHitGround(raycastHit.collider);
+        // the box cast hits when player _jumps_ too, so we need to check if player is "landing" on the platform.
+        if (Mathf.Abs(rb.velocity.y) < 0.1)
+        {
+          isGrounded = true;
+          // here when player lands, set y vel to zero, otherwise when the player jumps again,
+          // the y-direction force will not be applied correctly
+          var vel = rb.velocity;
+          vel.y = 0;
+          rb.velocity = vel;
+          jumpTime = 0;
+          passDownOneWayPlatform.OnHitGround(raycastHit.collider);
+        }
       }
 
     }
@@ -69,30 +104,13 @@ public class movement : MonoBehaviour
     }
   }
 
-  //void OnTriggerEnter2D(Collider2D collision)
-  //{
-  //  if (collision.gameObject.tag == "platform")
-  //  {
-  //    var moveDownSupp = collision.gameObject.GetComponent<MoveDownSupport>();
-  //    if (!moveDownSupp || !moveDownSupp.IsPassThroughEnabled())
-  //    {
-  //      isGrounded = false;
-  //    } 
-  //    else
-  //    {
-  //      isGrounded = true;
-  //      jumpTime = 0;
-  //    }
-  //  }
-  //}
-
-  //void OnTriggerExit2D(Collider2D collision)
-  //{
-  //  if (collision.gameObject.tag == "platform")
-  //  {
-  //    isGrounded = false;
-  //  }
-  //}
+  private void flip()
+  {
+    var current = transform.localScale;
+    current.x *= -1;
+    transform.localScale = current;
+    facingRight = !facingRight;
+  }
 
   private void DoJump()
   {
@@ -102,6 +120,7 @@ public class movement : MonoBehaviour
       jumpTime += 1;
       isGrounded = false;
       lastJumpedTime = Time.time;
+      Debug.Log(jumpTime);
     }
   }
 }
