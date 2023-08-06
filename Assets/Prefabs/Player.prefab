@@ -104,8 +104,8 @@ MonoBehaviour:
   PlatformLayerMask:
     serializedVersion: 2
     m_Bits: 64
-  speed: 3
-  jumpForce: 40
+  speed: 2
+  jumpForce: 45
   isGrounded: 0
   jumpLimit: 1
 --- !u!114 &819462394256124534
